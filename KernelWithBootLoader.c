@@ -65,9 +65,9 @@ if(EFI_ERROR(status)) {
 //커널 가동
 UINTN entry_addr = *(UINT64*)(kernel_base_addr + 24);
 
-typedef void EntryPointType(void);
+typedef void EntryPointType(UINT64, UINT64);
 EntryPointType* entry_point = (EntryPointType*)entry_addr;
-entry_point();
+entry_point(gop->Mode->FrameBufferBase, gop->Mode->FrameBufferSize);
 
 //((EntryPointType*)entry_addr)(); 과 같이 호출하는 것도 가능
 
