@@ -1,6 +1,3 @@
-#include <Uefi.h>
-#include <Library/UefiLib.h>
-
 EFI_STATUS GetMemoryMap(struct MemoryMap* map) {
     if(map->buffer == NULL) {
         return EFI_BUFFER_TOO_SMALL;
