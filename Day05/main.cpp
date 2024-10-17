@@ -1,6 +1,7 @@
-#include "frame_buffer_config.hpp";
-#include "graphics.hpp";
-#include "font.hpp";
+#include "frame_buffer_config.hpp"
+#include "graphics.hpp"
+#include "font.hpp"
+#include "console.hpp"
 #include <cstdio>
 
 //displacement new 구현
@@ -10,6 +11,10 @@ void* operator new(size_t size, void* buf) {
 
 void operator delete(void* obj) noexcept { 
 }
+
+//global area
+char pixel_writer_buf[sizeof(RGBResv8BitPerColorPixelWriter)];
+PixelWriter* pixel_writer;
 
 //C언어 형식으로 함수 정의
 //커널 Main
@@ -32,15 +37,14 @@ extern "C" void KernelMain(const FrameBufferConfig& frame_buffer_config) {
         }
     }
 
-    int i = 0;
-    for(char c = '!'; c <= '~'; c++, i++) {
-        WriteAscii(*pixel_writer, 8*i, 50, c {0, 0, 0});
-    }
-    WriteString(*pixel_writer, 0, 66, "Hello, world!", {0, 0, 255});
+    Console console{*pixel_writer, {0, 0, 0}, {255, 255, 255}};
 
+    //줄바꿈 테스트
     char buf[128];
-    sprintf(buf, "1 + 2 = %d", 1+2);
-    WriteString(*pixel_writer, 0, 82, buf, {0, 0, 0});
+    for(int i = 0; i < 27; i++) {
+        sprintf(buf, "line %d\n", i);
+        console.PutString(buf);
+    }
 
     while (1) __asm__("hlt");
 }
