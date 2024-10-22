@@ -20,4 +20,4 @@ uint16_t ReadDeviceId(uint8_t bus, uint8_t device, uint8_t function);
 uint8_t ReadHeaderType(uint8_t bus, uint8_t device, uint8_t function);
 uint32_t ReadClassCode(uint8_t bus, uint8_t device, uint8_t function);
 
-Error ScanAllBus();
+//Error ScanAllBus();
