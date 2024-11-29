@@ -1,4 +1,3 @@
-//uintX_t 자료형 사용 위해 include
 #include <cstdint>
 #include "frame_buffer_config.hpp"
 
@@ -8,15 +7,15 @@ struct PixelColor {
 
 class PixelWriter {
     public:
-        PixelWriter(const FrameBufferConfig& config) : config_ {config} {}
+        PixelWriter(const FrameBufferConfig& config) : config_{config} {}
         virtual ~PixelWriter() = default;
         virtual void Write(int x, int y, const PixelColor& c) = 0;
-    
+
     protected:
         uint8_t* PixelAt(int x, int y) {
-            return config_.frame_buffer + 4*(config_.pixels_per_scan_line*y + x);
+            return config_.frame_buffer + 4 * (config_.pixels_per_scan_line*y + x);
         }
-
+    
     private:
         const FrameBufferConfig& config_;
 };
@@ -24,43 +23,66 @@ class PixelWriter {
 class RGBResv8BitPerColorPixelWriter : public PixelWriter {
     public:
         using PixelWriter::PixelWriter;
-    
-    virtual void Write(int x, int y, const PixelColor& c) override {
-        auto p = PixelAt(x, y);
-        p[0] = c.r;
-        p[1] = c.g;
-        p[2] = c.b;
-    }
+
+        virtual void Write(int x, int y, const PixelColor& c) override {
+            auto p = PixelAt(x, y);
+            p[0] = c.r;
+            p[1] = c.g;
+            p[2] = c.b;
+        }
 };
 
 class BGRResv8BitPerColorPixelWriter : public PixelWriter {
     public:
         using PixelWriter::PixelWriter;
+
+        virtual void Write(int x, int y, const PixelColor& c) override {
+            auto p = PixelAt(x, y);
+            p[0] = c.b;
+            p[1] = c.g;
+            p[2] = c.r;
+        }
+};
+
+int WritePixel(const FrameBufferConfig& config,
+               int x, int y, const PixelColor& c) {
     
-    virtual void Write(int x, int y, const PixelColor& c) override {
-        auto p = PixelAt(x, y);
+    const int pixel_position = config.pixels_per_scan_line*y + x;
+    if(config.pixel_format == kPixelRGBResv8BitPerColor) {
+        uint8_t* p = &config.frame_buffer[4 * pixel_position];
+        p[0] = c.r;
+        p[1] = c.g;
+        p[2] = c.b;
+    } else if(config.pixel_format == kPixelBGRResv8BitPerColor) {
+        uint8_t* p = &config.frame_buffer[4 * pixel_position];
         p[0] = c.b;
         p[1] = c.g;
         p[2] = c.r;
+    } else {
+        return -1;
     }
-};
 
-//displacement new 구현
-//메모리 영역 확보 X. 파라미터로 지정한 메모리 영역상에 인스턴스 생성
+    return 0;
+}
+
+//for pixel_writer pointer
+//start of code
+char pixel_writer_buf[sizeof(RGBResv8BitPerColorPixelWriter)];
+PixelWriter* pixel_writer;
+//end of code
+
+//for displacement new
+//start of code
 void* operator new(size_t size, void* buf) {
     return buf;
 }
 
-void operator delete(void* obj) noexcept {}
+void operator delete(void* obj) noexcept {
+}
+//end of code
 
-//글로벌 변수
-char pixel_writer_buf[sizeof(RGBResv8BitPerColorPixelWriter)];
-PixelWriter* pixel_writer;
-
-//C언어 형식으로 함수 정의
-//커널 Main
 extern "C" void KernelMain(const FrameBufferConfig& frame_buffer_config) {
-    //displacement new 구현 참고
+
     switch(frame_buffer_config.pixel_format) {
         case kPixelRGBResv8BitPerColor:
             pixel_writer = new(pixel_writer_buf)
@@ -69,7 +91,7 @@ extern "C" void KernelMain(const FrameBufferConfig& frame_buffer_config) {
         case kPixelBGRResv8BitPerColor:
             pixel_writer = new(pixel_writer_buf)
                 BGRResv8BitPerColorPixelWriter{frame_buffer_config};
-            break; 
+            break;
     }
 
     for(int x = 0; x < frame_buffer_config.horizontal_resolution; x++) {
@@ -80,9 +102,9 @@ extern "C" void KernelMain(const FrameBufferConfig& frame_buffer_config) {
 
     for(int x = 0; x < 200; x++) {
         for(int y = 0; y < 100; y++) {
-            pixel_writer->Write(x, y, {0, 255, 0});
+            pixel_writer->Write(100+x, 100+y, {0, 255, 0});
         }
     }
-
-    while (1) __asm__("hlt");
+    
+    while(1) __asm__("hlt");
 }
