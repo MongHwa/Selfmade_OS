@@ -42,3 +42,9 @@ class BGRResv8BitPerColorPixelWriter : public PixelWriter {
         using PixelWriter::PixelWriter;
         virtual void Write(int x, int y, const PixelColor& c) override;
 };
+
+void DrawRectangle(PixelWriter& writer, const Vector2D<int>& pos,
+                   const Vector2D<int>& size, const PixelColor& c);
+
+void FillRectangle(PixelWriter& writer, const Vector2D<int>& pos,
+                   const Vector2D<int>& size, const PixelColor& c);
