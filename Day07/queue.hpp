@@ -1,6 +1,5 @@
 #include <cstdint>
 #include <array>
-#include "error.hpp";
 
 template<typename T>
 class ArrayQueue {
