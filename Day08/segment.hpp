@@ -19,4 +19,3 @@ union SegmentDescriptor {
         uint64_t base_high : 8;
     } __attribute__((packed)) bits;
 } __attribute__((packed));
-

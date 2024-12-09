@@ -33,8 +33,12 @@ enum class MemoryType {
     kEfiConventionalMemory,
     kEfiUnusableMemory,
     kEfiACPIReclaimMemory,
-
-
+    kEfiACPIMemoryNVS,
+    kEfiMemoryMappedIO,
+    kEfiMemoryMappedIOPortSpace,
+    kEfiPalCode,
+    kEfiPersistentMemory,
+    kEfiMaxMemoryType,
 };
 
 inline bool operator== (uint32_t lhs, MemoryType rhs) {

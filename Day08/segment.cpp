@@ -40,7 +40,7 @@ void SetDataSegment(SegmentDescriptor& desc,
     
     SetCodeSegment(desc, type, descriptor_privileage_level, base, limit);
     desc.bits.long_mode = 0;
-    desc.bits.default_operation_size = 1; //
+    desc.bits.default_operation_size = 1;
 }
 
 //3. 세그먼트 구축 (디스크립터 0, 1, 2 결합 후 로드)
