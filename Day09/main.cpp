@@ -10,6 +10,7 @@
 #include "memory_manager.hpp"
 #include "window.hpp"
 #include "layer.hpp"
+#include "frame_buffer.hpp"
 
 int WritePixel(const FrameBufferConfig& config,
                int x, int y, const PixelColor& c) {
@@ -394,6 +395,20 @@ extern "C" void KernelMainNewStack(const FrameBufferConfig& frame_buffer_config_
     console->SetWriter(pixel_writer);
     printk("Welcome to MikanOS!\n");
     SetLogLevel(kWarn);
+
+    //실제 프레임 버퍼를 나타내는 FrameBuffer 인스턴스 생성
+    FrameBuffer screen;
+    if(auto err = screen.Initialize(frame_buffer_config)) {
+        Log(kError, "failed to initialize frame buffer: %s at %s:%d\n",
+            err.Name(), err.File(), err.Line());
+    }
+
+    layer_manager = new LayerManager;
+    layer_manager->SetWriter(&screen);
+
+    //콘솔의 렌더링 타깃 윈도우 설정
+    DrawDesktop(*bgwriter);
+    console->SetWindow(bgwindow);
 
     while(1) __asm__("hlt");
 }

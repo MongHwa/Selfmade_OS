@@ -3,8 +3,8 @@ class Window {
         class WindowWriter : public PixelWriter {
             public:
                 WindowWriter(Window& window) : window_{window} {}
-                virtual void Write(int x, int y, const PixelColor& c) override {
-                    window_.At(x, y) = c;
+                virtual void Write(vector2D<int> pos, const PixelColor& c) override {
+                    window_.Write(pos, c);
                 }
 
                 virtual int Width() const override { return window_.Width(); }
@@ -14,7 +14,7 @@ class Window {
                 Window& window_;
         };
 
-        Window(int width, int height);
+        Window(int width, int height, PixelFormat shadow_format);
         ~Window() = default;
         Window(const Window& rhs) = delete;
         Window& operator=(const Window& rhs) = delete;

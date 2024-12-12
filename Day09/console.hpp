@@ -10,6 +10,7 @@ class Console {
             const PixelColor& fg_color, const PixelColor& bg_color);
         void PutString(const char* s);
         void SetWriter(PixelWriter* writer);
+        void SetWindow(const std::shared_ptr<Window>& window);
 
     private:
         void Newline();

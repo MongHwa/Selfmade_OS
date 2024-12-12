@@ -1,3 +1,5 @@
+#include "frame_buffer.hpp"
+
 class Layer {
     public:
         Layer(unsigned int id = 0);
@@ -31,7 +33,7 @@ class LayerManager {
         void Hide(unsigned int id);
 
     private:
-        PixelWriter* writer_{nullptr};
+        FrameBuffer* screen_{nullptr};
         std::vector<std::unique_ptr<Layer>> layers_{};
         std::vector<Layer*> layer_stack_{};
         unsigned int latest_id_{0};
