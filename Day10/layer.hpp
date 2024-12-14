@@ -16,7 +16,8 @@ class Layer {
     private:
         unsigned int id_;
         Vector2D<int> pos_;
-        std::shared_ptr<Window> window_;
+        std::shared_ptr<Window> window_{};
+        bool draggalbe_{false};
 };
 
 class LayerManager {

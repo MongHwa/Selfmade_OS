@@ -138,3 +138,12 @@ void LayerManager::SetWriter(FrameBuffer* screen) {
     back_config.frame_buffer = nullptr;
     back_buffer_.Initialize(back_config);
 }
+
+Layer& Layer::SetDraggable(bool draggable) {
+    draggable_ = draggable;
+    return *this;
+}
+
+bool Layer::IsDraggable() const {
+    return draggable_;
+}
